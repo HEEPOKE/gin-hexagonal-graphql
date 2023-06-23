@@ -42,7 +42,7 @@ func LoadConfig() (*Config, error) {
 		DB_TIMEZONE: viper.GetString("DB_TIMEZONE"),
 		PORT:        viper.GetInt("PORT"),
 		PRIVATE_KEY: viper.GetString("PRIVATE_KEY"),
-		PUBLIC_KEY:  viper.GetString("DB_HOST"),
+		PUBLIC_KEY:  viper.GetString("PUBLIC_KEY"),
 	}
 
 	Cfg = config

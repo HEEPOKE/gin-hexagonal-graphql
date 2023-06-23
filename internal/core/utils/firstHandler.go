@@ -1,9 +1,19 @@
 package utils
 
-import "github.com/gin-gonic/gin"
+import (
+	"net/http"
 
+	"github.com/gin-gonic/gin"
+)
+
+// HelloHandler godoc
+// @Summary Hello example
+// @Description do Hello
+// @Tags example
+// @Accept json
+// @Produce json
+// @Success 200 {string} string "Hello"
+// @Router / [get]
 func HandleFirst(c *gin.Context) {
-	c.JSON(200, gin.H{
-		"message": "Hello",
-	})
+	c.String(http.StatusOK, "Hello")
 }

@@ -3,7 +3,7 @@ package http
 import (
 	"fmt"
 
-	docs "github.com/HEEPOKE/gin-hexagonal-graphql/internal/app/docs"
+	_ "github.com/HEEPOKE/gin-hexagonal-graphql/internal/app/docs"
 	"github.com/HEEPOKE/gin-hexagonal-graphql/internal/core/utils"
 	"github.com/HEEPOKE/gin-hexagonal-graphql/pkg/config"
 	"github.com/gin-gonic/gin"
@@ -24,13 +24,10 @@ func NewServer(config config.Config) *Server {
 }
 
 func (s *Server) ConfigureRoutes() {
-	docs.SwaggerInfo.BasePath = "/apis"
-
-	s.router.GET("/", utils.HandleFirst)
-
 	api := s.router.Group("/apis")
-	api.GET("/", utils.HandleFirst)
 	api.GET("/docs/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
+
+	api.GET("/", utils.HandleFirst)
 }
 
 func (s *Server) Start() {

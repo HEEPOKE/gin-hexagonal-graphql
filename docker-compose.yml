@@ -8,7 +8,7 @@ services:
     environment:
       - POSTGRES_USER=yoyo
       - POSTGRES_PASSWORD=5555
-      - POSTGRES_DB=echo-hex
+      - POSTGRES_DB=gin-graphql
     networks:
       - Heepoke
 

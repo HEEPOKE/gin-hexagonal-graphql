@@ -1,9 +1,20 @@
 package main
 
-import "github.com/gin-gonic/gin"
+import (
+	"log"
+
+	"github.com/HEEPOKE/gin-hexagonal-graphql/pkg/config"
+	"github.com/gin-gonic/gin"
+)
 
 func main() {
+	_, err := config.LoadConfig()
+	if err != nil {
+		log.Fatal(err)
+	}
+	gin.SetMode(gin.ReleaseMode)
+
 	router := gin.Default()
 
-	router.Run(":8080")
+	router.Run(":" + config.Cfg.PORT)
 }

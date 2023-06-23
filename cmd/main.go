@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 
+	"github.com/HEEPOKE/gin-hexagonal-graphql/internal/http"
 	"github.com/HEEPOKE/gin-hexagonal-graphql/pkg/config"
 	"github.com/HEEPOKE/gin-hexagonal-graphql/pkg/database"
 	"github.com/gin-gonic/gin"
@@ -13,14 +14,16 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	gin.SetMode(gin.ReleaseMode)
 
 	_, err = database.ConnectDatabase()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	router := gin.Default()
+	gin.SetMode(gin.ReleaseMode)
 
-	router.Run(":" + config.Cfg.PORT)
+	server := http.NewServer(*config.Cfg)
+
+	server.ConfigureRoutes()
+	server.Start()
 }

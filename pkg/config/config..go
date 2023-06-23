@@ -18,7 +18,7 @@ type Config struct {
 	DB_PORT     string
 	DB_SSL      string
 	DB_TIMEZONE string
-	PORT        string
+	PORT        int
 	PRIVATE_KEY string
 	PUBLIC_KEY  string
 }
@@ -40,7 +40,7 @@ func LoadConfig() (*Config, error) {
 		DB_PORT:     viper.GetString("DB_PORT"),
 		DB_SSL:      viper.GetString("DB_SSL"),
 		DB_TIMEZONE: viper.GetString("DB_TIMEZONE"),
-		PORT:        viper.GetString("PORT"),
+		PORT:        viper.GetInt("PORT"),
 		PRIVATE_KEY: viper.GetString("PRIVATE_KEY"),
 		PUBLIC_KEY:  viper.GetString("DB_HOST"),
 	}

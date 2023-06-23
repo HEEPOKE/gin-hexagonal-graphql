@@ -9,6 +9,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// @title Swagger Example API
+// @title Go Gin Graphql Hexagonal API
+// @version 1.0
+// @description This is a Go Gin Graphql Hexagonal API server.
+// @host localhost:6476
+// @BasePath /apis
 func main() {
 	_, err := config.LoadConfig()
 	if err != nil {

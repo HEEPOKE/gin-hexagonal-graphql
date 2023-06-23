@@ -13,17 +13,13 @@ import (
 	"github.com/HEEPOKE/gin-hexagonal-graphql/pkg/config"
 )
 
-var privateKeyPem = []byte(`-----BEGIN RSA PRIVATE KEY-----` + config.Cfg.PRIVATE_KEY + `-----END RSA PRIVATE KEY-----`)
-
-var publicKeyPem = []byte(`-----BEGIN PUBLIC KEY-----` + config.Cfg.PUBLIC_KEY + `-----END PUBLIC KEY-----`)
-
 func Decrypt(encryptedMessage string) (string, error) {
 	encryptedBuffer, err := base64.StdEncoding.DecodeString(encryptedMessage)
 	if err != nil {
 		return "", fmt.Errorf("failed to decode encrypted message: %w", err)
 	}
 
-	block, _ := pem.Decode(privateKeyPem)
+	block, _ := pem.Decode([]byte(config.Cfg.PRIVATE_KEY))
 	if block == nil {
 		return "", errors.New("failed to parse private key")
 	}
@@ -44,7 +40,7 @@ func Decrypt(encryptedMessage string) (string, error) {
 func Encrypt(plainText string) (string, error) {
 	plainTextBuffer := []byte(plainText)
 
-	block, _ := pem.Decode(publicKeyPem)
+	block, _ := pem.Decode([]byte(config.Cfg.PUBLIC_KEY))
 	if block == nil {
 		return "", errors.New("failed to parse public key")
 	}

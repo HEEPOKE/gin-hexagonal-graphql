@@ -4,14 +4,12 @@ import (
 	"fmt"
 	"time"
 
-	_ "github.com/HEEPOKE/gin-hexagonal-graphql/internal/app/docs"
-	"github.com/HEEPOKE/gin-hexagonal-graphql/internal/core/utils"
+	ConfigGraphql "github.com/HEEPOKE/gin-hexagonal-graphql/internal/server/graphql"
 	"github.com/HEEPOKE/gin-hexagonal-graphql/pkg/config"
 	helmet "github.com/danielkov/gin-helmet"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	swaggerfiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
+	"github.com/graphql-go/handler"
 )
 
 type Server struct {
@@ -50,16 +48,22 @@ func NewServer(config config.Config) *Server {
 	router.Use(gin.Recovery())
 
 	return &Server{
-		router: gin.Default(),
+		router: router,
 		config: config,
 	}
 }
 
-func (s *Server) ConfigureRoutes() {
-	api := s.router.Group("/apis")
-	api.GET("/docs/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
+func (s *Server) ConfigureGraphQLRoutes() {
+	h := handler.New(&handler.Config{
+		Schema:   ConfigGraphql.GetSchema(),
+		Pretty:   true,
+		GraphiQL: true,
+	})
 
-	api.GET("/", utils.HandleFirst)
+	api := s.router.Group("/api")
+	api.POST("/graphql", func(c *gin.Context) {
+		h.ServeHTTP(c.Writer, c.Request)
+	})
 }
 
 func (s *Server) Start() {

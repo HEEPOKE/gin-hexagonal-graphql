@@ -2,6 +2,8 @@ package http
 
 import (
 	"fmt"
+	"log"
+	"net/http"
 	"time"
 
 	ConfigGraphql "github.com/HEEPOKE/gin-hexagonal-graphql/internal/server/graphql"
@@ -55,18 +57,23 @@ func NewServer(config config.Config) *Server {
 
 func (s *Server) ConfigureGraphQLRoutes() {
 	h := handler.New(&handler.Config{
-		Schema:   ConfigGraphql.GetSchema(),
-		Pretty:   true,
-		GraphiQL: true,
+		Schema:     ConfigGraphql.GetSchema(),
+		Pretty:     true,
+		GraphiQL:   true,
+		Playground: false,
 	})
 
-	api := s.router.Group("/api")
-	api.POST("/graphql", func(c *gin.Context) {
-		h.ServeHTTP(c.Writer, c.Request)
+	s.router.POST("/graphql", gin.WrapH(h))
+
+	s.router.GET("/graphql-playground", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "playground.html", nil)
 	})
+
+	// api := s.router.Group("/apis")
 }
 
 func (s *Server) Start() {
 	addr := fmt.Sprintf(":%d", s.config.PORT)
+	log.Printf("Server is running at http://localhost:%d/", s.config.PORT)
 	s.router.Run(addr)
 }

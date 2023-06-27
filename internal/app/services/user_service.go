@@ -15,22 +15,22 @@ func NewUserService(userRepository *repositories.UserRepository) *UserService {
 	}
 }
 
-func (s *UserService) CreateUser(user *models.User) error {
-	return s.UserRepository.CreateUser(user)
+func (us *UserService) GetAllUsers() ([]*models.User, error) {
+	return us.UserRepository.GetAllUsers()
 }
 
-func (s *UserService) GetUserByID(id uint) (*models.User, error) {
-	return s.UserRepository.GetUserByID(id)
+func (us *UserService) CreateUser(user *models.User) error {
+	return us.UserRepository.CreateUser(user)
 }
 
-func (s *UserService) UpdateUser(user *models.User) error {
-	return s.UserRepository.UpdateUser(user)
+func (us *UserService) GetUserByID(id int) (*models.User, error) {
+	return us.UserRepository.GetUserByID(id)
 }
 
-func (s *UserService) DeleteUser(user *models.User) error {
-	return s.UserRepository.DeleteUser(user)
+func (us *UserService) UpdateUser(user *models.User) error {
+	return us.UserRepository.UpdateUser(user)
 }
 
-func (s *UserService) GetAllUsers() ([]*models.User, error) {
-	return s.UserRepository.GetAllUsers()
+func (us *UserService) DeleteUser(user *models.User) error {
+	return us.UserRepository.DeleteUser(user)
 }

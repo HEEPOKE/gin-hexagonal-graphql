@@ -20,7 +20,7 @@ func (r *UserResolver) GetAllUsers(params graphql.ResolveParams) (interface{}, e
 }
 
 func (r *UserResolver) GetUserByID(params graphql.ResolveParams) (interface{}, error) {
-	id := params.Args["id"].(uint)
+	id := params.Args["id"].(int)
 	user, err := r.UserService.GetUserByID(id)
 	if err != nil {
 		return nil, err
@@ -47,7 +47,7 @@ func (r *UserResolver) CreateUser(params graphql.ResolveParams) (interface{}, er
 }
 
 func (r *UserResolver) UpdateUser(params graphql.ResolveParams) (interface{}, error) {
-	id := params.Args["id"].(uint)
+	id := params.Args["id"].(int)
 	name := params.Args["name"].(string)
 	email := params.Args["email"].(string)
 
@@ -68,7 +68,7 @@ func (r *UserResolver) UpdateUser(params graphql.ResolveParams) (interface{}, er
 }
 
 func (r *UserResolver) DeleteUser(params graphql.ResolveParams) (interface{}, error) {
-	id := params.Args["id"].(uint)
+	id := params.Args["id"].(int)
 
 	user, err := r.UserService.GetUserByID(id)
 	if err != nil {

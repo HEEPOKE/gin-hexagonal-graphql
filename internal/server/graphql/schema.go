@@ -13,42 +13,43 @@ var userType = graphql.NewObject(
 			"id": &graphql.Field{
 				Type: graphql.Int,
 			},
-			"name": &graphql.Field{
-				Type: graphql.String,
-			},
 			"email": &graphql.Field{
 				Type: graphql.String,
 			},
-		},
-	},
-)
-
-var createUserInputType = graphql.NewInputObject(
-	graphql.InputObjectConfig{
-		Name: "CreateUserInput",
-		Fields: graphql.InputObjectConfigFieldMap{
-			"name": &graphql.InputObjectFieldConfig{
-				Type: graphql.NewNonNull(graphql.String),
+			"username": &graphql.Field{
+				Type: graphql.String,
 			},
-			"email": &graphql.InputObjectFieldConfig{
-				Type: graphql.NewNonNull(graphql.String),
+			"password": &graphql.Field{
+				Type: graphql.String,
+			},
+			"tel": &graphql.Field{
+				Type: graphql.String,
+			},
+			"role": &graphql.Field{
+				Type: graphql.String,
 			},
 		},
 	},
 )
 
-var updateUserInputType = graphql.NewInputObject(
+var userInputType = graphql.NewInputObject(
 	graphql.InputObjectConfig{
-		Name: "UpdateUserInput",
+		Name: "UserInput",
 		Fields: graphql.InputObjectConfigFieldMap{
-			"id": &graphql.InputObjectFieldConfig{
-				Type: graphql.NewNonNull(graphql.Int),
-			},
-			"name": &graphql.InputObjectFieldConfig{
-				Type: graphql.NewNonNull(graphql.String),
-			},
 			"email": &graphql.InputObjectFieldConfig{
 				Type: graphql.NewNonNull(graphql.String),
+			},
+			"username": &graphql.InputObjectFieldConfig{
+				Type: graphql.NewNonNull(graphql.String),
+			},
+			"password": &graphql.InputObjectFieldConfig{
+				Type: graphql.NewNonNull(graphql.String),
+			},
+			"tel": &graphql.InputObjectFieldConfig{
+				Type: graphql.String,
+			},
+			"role": &graphql.InputObjectFieldConfig{
+				Type: graphql.String,
 			},
 		},
 	},
@@ -61,7 +62,6 @@ var rootQuery = graphql.NewObject(
 			"users": &graphql.Field{
 				Type: graphql.NewList(userType),
 				Resolve: func(params graphql.ResolveParams) (interface{}, error) {
-					// Resolve logic for fetching all users
 					userService := params.Context.Value("userService").(*services.UserService)
 					return userService.GetAllUsers()
 				},
@@ -74,9 +74,8 @@ var rootQuery = graphql.NewObject(
 					},
 				},
 				Resolve: func(params graphql.ResolveParams) (interface{}, error) {
-					// Resolve logic for fetching a user by ID
 					userService := params.Context.Value("userService").(*services.UserService)
-					id := params.Args["id"].(int)
+					id := int(params.Args["id"].(int))
 					return userService.GetUserByID(id)
 				},
 			},
@@ -92,48 +91,71 @@ var rootMutation = graphql.NewObject(
 				Type: userType,
 				Args: graphql.FieldConfigArgument{
 					"user": &graphql.ArgumentConfig{
-						Type: graphql.NewNonNull(createUserInputType),
+						Type: graphql.NewNonNull(userInputType),
 					},
 				},
 				Resolve: func(params graphql.ResolveParams) (interface{}, error) {
-					// Resolve logic for creating a user
 					userService := params.Context.Value("userService").(*services.UserService)
 					userInput := params.Args["user"].(map[string]interface{})
-					name := userInput["name"].(string)
 					email := userInput["email"].(string)
+					username := userInput["username"].(string)
+					password := userInput["password"].(string)
+					tel, _ := userInput["tel"].(string)
+					role, _ := userInput["role"].(string)
 
 					user := &models.User{
-						Username: name,
 						Email:    email,
+						Username: username,
+						Password: password,
+						Tel:      tel,
+						Role:     role,
 					}
 
-					return userService.CreateUser(user)
+					err := userService.CreateUser(user)
+					if err != nil {
+						return nil, err
+					}
+
+					return user, nil
 				},
 			},
 			"updateUser": &graphql.Field{
 				Type: userType,
 				Args: graphql.FieldConfigArgument{
+					"id": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.Int),
+					},
 					"user": &graphql.ArgumentConfig{
-						Type: graphql.NewNonNull(updateUserInputType),
+						Type: graphql.NewNonNull(userInputType),
 					},
 				},
 				Resolve: func(params graphql.ResolveParams) (interface{}, error) {
-					// Resolve logic for updating a user
 					userService := params.Context.Value("userService").(*services.UserService)
+					id := params.Args["id"].(int)
 					userInput := params.Args["user"].(map[string]interface{})
-					id := userInput["id"].(int)
-					name := userInput["name"].(string)
 					email := userInput["email"].(string)
+					username := userInput["username"].(string)
+					password := userInput["password"].(string)
+					tel, _ := userInput["tel"].(string)
+					role, _ := userInput["role"].(string)
 
 					user, err := userService.GetUserByID(id)
 					if err != nil {
 						return nil, err
 					}
 
-					user.Username = name
 					user.Email = email
+					user.Username = username
+					user.Password = password
+					user.Tel = tel
+					user.Role = role
 
-					return userService.UpdateUser(user)
+					err = userService.UpdateUser(user)
+					if err != nil {
+						return nil, err
+					}
+
+					return user, nil
 				},
 			},
 			"deleteUser": &graphql.Field{
@@ -146,6 +168,7 @@ var rootMutation = graphql.NewObject(
 				Resolve: func(params graphql.ResolveParams) (interface{}, error) {
 					userService := params.Context.Value("userService").(*services.UserService)
 					id := params.Args["id"].(int)
+
 					user, err := userService.GetUserByID(id)
 					if err != nil {
 						return nil, err
@@ -163,7 +186,7 @@ var rootMutation = graphql.NewObject(
 	},
 )
 
-func NewSchema(userService *services.UserService) (graphql.Schema, error) {
+func NewSchema(userService *services.UserService) (*graphql.Schema, error) {
 	schemaConfig := graphql.SchemaConfig{
 		Query:    rootQuery,
 		Mutation: rootMutation,
@@ -174,5 +197,5 @@ func NewSchema(userService *services.UserService) (graphql.Schema, error) {
 		return nil, err
 	}
 
-	return schema, nil
+	return &schema, nil
 }

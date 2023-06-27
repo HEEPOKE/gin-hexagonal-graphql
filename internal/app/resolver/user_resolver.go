@@ -10,7 +10,13 @@ type UserResolver struct {
 	UserService *services.UserService
 }
 
-func (r *UserResolver) GetAllUsers(params graphql.ResolveParams) (interface{}, error) {
+func NewUserResolver(userService *services.UserService) *UserResolver {
+	return &UserResolver{
+		UserService: userService,
+	}
+}
+
+func (r *UserResolver) ResolveGetAllUsers(params graphql.ResolveParams) (interface{}, error) {
 	users, err := r.UserService.GetAllUsers()
 	if err != nil {
 		return nil, err
@@ -19,7 +25,7 @@ func (r *UserResolver) GetAllUsers(params graphql.ResolveParams) (interface{}, e
 	return users, nil
 }
 
-func (r *UserResolver) GetUserByID(params graphql.ResolveParams) (interface{}, error) {
+func (r *UserResolver) ResolveGetUserByID(params graphql.ResolveParams) (interface{}, error) {
 	id := params.Args["id"].(int)
 	user, err := r.UserService.GetUserByID(id)
 	if err != nil {
@@ -29,7 +35,7 @@ func (r *UserResolver) GetUserByID(params graphql.ResolveParams) (interface{}, e
 	return user, nil
 }
 
-func (r *UserResolver) CreateUser(params graphql.ResolveParams) (interface{}, error) {
+func (r *UserResolver) ResolveCreateUser(params graphql.ResolveParams) (interface{}, error) {
 	name := params.Args["name"].(string)
 	email := params.Args["email"].(string)
 
@@ -46,7 +52,7 @@ func (r *UserResolver) CreateUser(params graphql.ResolveParams) (interface{}, er
 	return user, nil
 }
 
-func (r *UserResolver) UpdateUser(params graphql.ResolveParams) (interface{}, error) {
+func (r *UserResolver) ResolveUpdateUser(params graphql.ResolveParams) (interface{}, error) {
 	id := params.Args["id"].(int)
 	name := params.Args["name"].(string)
 	email := params.Args["email"].(string)
@@ -67,7 +73,7 @@ func (r *UserResolver) UpdateUser(params graphql.ResolveParams) (interface{}, er
 	return user, nil
 }
 
-func (r *UserResolver) DeleteUser(params graphql.ResolveParams) (interface{}, error) {
+func (r *UserResolver) ResolveDeleteUser(params graphql.ResolveParams) (interface{}, error) {
 	id := params.Args["id"].(int)
 
 	user, err := r.UserService.GetUserByID(id)

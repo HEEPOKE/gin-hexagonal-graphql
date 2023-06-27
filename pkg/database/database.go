@@ -13,6 +13,8 @@ import (
 	"gorm.io/gorm/logger"
 )
 
+var DB *gorm.DB
+
 func ConnectDatabase() (*gorm.DB, error) {
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=%s TimeZone=%s",
 		config.Cfg.DB_HOST, config.Cfg.DB_USER, config.Cfg.DB_PASSWORD, config.Cfg.DB_NAME, config.Cfg.DB_PORT, config.Cfg.DB_SSL, config.Cfg.DB_TIMEZONE)

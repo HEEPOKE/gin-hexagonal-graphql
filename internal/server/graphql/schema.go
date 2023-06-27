@@ -1,10 +1,14 @@
 package graphql
 
 import (
+	"github.com/HEEPOKE/gin-hexagonal-graphql/internal/app/resolver"
 	"github.com/HEEPOKE/gin-hexagonal-graphql/internal/app/services"
-	"github.com/HEEPOKE/gin-hexagonal-graphql/internal/domains/models"
+	"github.com/HEEPOKE/gin-hexagonal-graphql/internal/domains/repositories"
+	"github.com/HEEPOKE/gin-hexagonal-graphql/pkg/database"
 	"github.com/graphql-go/graphql"
 )
+
+var schema graphql.Schema
 
 var userType = graphql.NewObject(
 	graphql.ObjectConfig{
@@ -55,147 +59,90 @@ var userInputType = graphql.NewInputObject(
 	},
 )
 
-var rootQuery = graphql.NewObject(
-	graphql.ObjectConfig{
-		Name: "Query",
-		Fields: graphql.Fields{
-			"users": &graphql.Field{
-				Type: graphql.NewList(userType),
-				Resolve: func(params graphql.ResolveParams) (interface{}, error) {
-					userService := params.Context.Value("userService").(*services.UserService)
-					return userService.GetAllUsers()
-				},
-			},
-			"user": &graphql.Field{
-				Type: userType,
-				Args: graphql.FieldConfigArgument{
-					"id": &graphql.ArgumentConfig{
-						Type: graphql.NewNonNull(graphql.Int),
-					},
-				},
-				Resolve: func(params graphql.ResolveParams) (interface{}, error) {
-					userService := params.Context.Value("userService").(*services.UserService)
-					id := int(params.Args["id"].(int))
-					return userService.GetUserByID(id)
-				},
+func init() {
+	userRepository := repositories.NewUserRepository(database.DB)
+	userService := services.NewUserService(userRepository)
+
+	userResolver := resolver.NewUserResolver(userService)
+
+	fields := graphql.Fields{
+		"users": &graphql.Field{
+			Type: graphql.NewList(userType),
+			Resolve: func(params graphql.ResolveParams) (interface{}, error) {
+				return userResolver.ResolveGetAllUsers(params)
 			},
 		},
-	},
-)
-
-var rootMutation = graphql.NewObject(
-	graphql.ObjectConfig{
-		Name: "Mutation",
-		Fields: graphql.Fields{
-			"createUser": &graphql.Field{
-				Type: userType,
-				Args: graphql.FieldConfigArgument{
-					"user": &graphql.ArgumentConfig{
-						Type: graphql.NewNonNull(userInputType),
-					},
-				},
-				Resolve: func(params graphql.ResolveParams) (interface{}, error) {
-					userService := params.Context.Value("userService").(*services.UserService)
-					userInput := params.Args["user"].(map[string]interface{})
-					email := userInput["email"].(string)
-					username := userInput["username"].(string)
-					password := userInput["password"].(string)
-					tel, _ := userInput["tel"].(string)
-					role, _ := userInput["role"].(string)
-
-					user := &models.User{
-						Email:    email,
-						Username: username,
-						Password: password,
-						Tel:      tel,
-						Role:     role,
-					}
-
-					err := userService.CreateUser(user)
-					if err != nil {
-						return nil, err
-					}
-
-					return user, nil
+		"user": &graphql.Field{
+			Type: userType,
+			Args: graphql.FieldConfigArgument{
+				"id": &graphql.ArgumentConfig{
+					Type: graphql.NewNonNull(graphql.Int),
 				},
 			},
-			"updateUser": &graphql.Field{
-				Type: userType,
-				Args: graphql.FieldConfigArgument{
-					"id": &graphql.ArgumentConfig{
-						Type: graphql.NewNonNull(graphql.Int),
-					},
-					"user": &graphql.ArgumentConfig{
-						Type: graphql.NewNonNull(userInputType),
-					},
-				},
-				Resolve: func(params graphql.ResolveParams) (interface{}, error) {
-					userService := params.Context.Value("userService").(*services.UserService)
-					id := params.Args["id"].(int)
-					userInput := params.Args["user"].(map[string]interface{})
-					email := userInput["email"].(string)
-					username := userInput["username"].(string)
-					password := userInput["password"].(string)
-					tel, _ := userInput["tel"].(string)
-					role, _ := userInput["role"].(string)
-
-					user, err := userService.GetUserByID(id)
-					if err != nil {
-						return nil, err
-					}
-
-					user.Email = email
-					user.Username = username
-					user.Password = password
-					user.Tel = tel
-					user.Role = role
-
-					err = userService.UpdateUser(user)
-					if err != nil {
-						return nil, err
-					}
-
-					return user, nil
-				},
-			},
-			"deleteUser": &graphql.Field{
-				Type: graphql.Boolean,
-				Args: graphql.FieldConfigArgument{
-					"id": &graphql.ArgumentConfig{
-						Type: graphql.NewNonNull(graphql.Int),
-					},
-				},
-				Resolve: func(params graphql.ResolveParams) (interface{}, error) {
-					userService := params.Context.Value("userService").(*services.UserService)
-					id := params.Args["id"].(int)
-
-					user, err := userService.GetUserByID(id)
-					if err != nil {
-						return nil, err
-					}
-
-					err = userService.DeleteUser(user)
-					if err != nil {
-						return nil, err
-					}
-
-					return true, nil
-				},
+			Resolve: func(params graphql.ResolveParams) (interface{}, error) {
+				return userResolver.ResolveGetUserByID(params)
 			},
 		},
-	},
-)
+		"createUser": &graphql.Field{
+			Type: userType,
+			Args: graphql.FieldConfigArgument{
+				"user": &graphql.ArgumentConfig{
+					Type: graphql.NewNonNull(userInputType),
+				},
+			},
+			Resolve: func(params graphql.ResolveParams) (interface{}, error) {
+				return userResolver.ResolveCreateUser(params)
+			},
+		},
+		"updateUser": &graphql.Field{
+			Type: userType,
+			Args: graphql.FieldConfigArgument{
+				"id": &graphql.ArgumentConfig{
+					Type: graphql.NewNonNull(graphql.Int),
+				},
+				"user": &graphql.ArgumentConfig{
+					Type: graphql.NewNonNull(userInputType),
+				},
+			},
+			Resolve: func(params graphql.ResolveParams) (interface{}, error) {
+				return userResolver.ResolveUpdateUser(params)
+			},
+		},
+		"deleteUser": &graphql.Field{
+			Type: userType,
+			Args: graphql.FieldConfigArgument{
+				"id": &graphql.ArgumentConfig{
+					Type: graphql.NewNonNull(graphql.Int),
+				},
+			},
+			Resolve: func(params graphql.ResolveParams) (interface{}, error) {
+				return userResolver.ResolveDeleteUser(params)
+			},
+		},
+	}
 
-func NewSchema(userService *services.UserService) (*graphql.Schema, error) {
+	rootQuery := graphql.ObjectConfig{
+		Name:   "Query",
+		Fields: fields,
+	}
+
+	rootMutation := graphql.ObjectConfig{
+		Name:   "Mutation",
+		Fields: fields,
+	}
+
 	schemaConfig := graphql.SchemaConfig{
-		Query:    rootQuery,
-		Mutation: rootMutation,
+		Query:    graphql.NewObject(rootQuery),
+		Mutation: graphql.NewObject(rootMutation),
 	}
 
-	schema, err := graphql.NewSchema(schemaConfig)
+	var err error
+	schema, err = graphql.NewSchema(schemaConfig)
 	if err != nil {
-		return nil, err
+		panic(err)
 	}
+}
 
-	return &schema, nil
+func GetSchema() *graphql.Schema {
+	return &schema
 }

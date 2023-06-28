@@ -27,15 +27,3 @@ go mod tidy
 ```bash
 go run cmd/main.go
 ```
-
-## Generate Swagger
-
-```bash
-swag init -g cmd/main.go --output=internal/app/docs
-```
-
-## Local Swagger Doc Api
-
-```bash
-http://localhost:6476/apis/docs/index.html
-```

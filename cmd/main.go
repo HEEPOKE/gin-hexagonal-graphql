@@ -6,7 +6,6 @@ import (
 	"github.com/HEEPOKE/gin-hexagonal-graphql/internal/http"
 	"github.com/HEEPOKE/gin-hexagonal-graphql/pkg/config"
 	"github.com/HEEPOKE/gin-hexagonal-graphql/pkg/database"
-	"github.com/gin-gonic/gin"
 )
 
 func main() {
@@ -20,10 +19,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	gin.SetMode(gin.ReleaseMode)
-
 	server := http.NewServer(*config.Cfg)
-
 	server.ConfigureGraphQLRoutes()
 	server.Start()
 }

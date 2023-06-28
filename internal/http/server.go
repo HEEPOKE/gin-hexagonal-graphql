@@ -23,15 +23,22 @@ func NewServer(config config.Config) *Server {
 }
 
 func (s *Server) ConfigureGraphQLRoutes() {
+	var playground bool
+	if s.config.LOCAL {
+		playground = true
+	} else {
+		playground = false
+	}
+
 	h := handler.New(&handler.Config{
 		Schema:     ConfigGraphql.GetSchema(),
 		Pretty:     true,
 		GraphiQL:   false,
-		Playground: true,
+		Playground: playground,
 	})
 
 	s.router.HandleFunc("/apis/graphql", func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != http.MethodPost {
+		if !s.config.LOCAL && r.Method != http.MethodPost {
 			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 			return
 		}

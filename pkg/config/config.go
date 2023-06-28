@@ -21,6 +21,7 @@ type Config struct {
 	PORT        int
 	PRIVATE_KEY string
 	PUBLIC_KEY  string
+	LOCAL       bool
 }
 
 func LoadConfig() (*Config, error) {
@@ -43,6 +44,7 @@ func LoadConfig() (*Config, error) {
 		PORT:        viper.GetInt("PORT"),
 		PRIVATE_KEY: viper.GetString("PRIVATE_KEY"),
 		PUBLIC_KEY:  viper.GetString("PUBLIC_KEY"),
+		LOCAL:       viper.GetBool("LOCAL"),
 	}
 
 	Cfg = config

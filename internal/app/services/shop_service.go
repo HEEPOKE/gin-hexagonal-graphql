@@ -9,12 +9,12 @@ type ShopService struct {
 	shopRepository *repositories.ShopRepository
 }
 
-func (s *ShopService) GetAllShops() ([]*models.Shop, error) {
-	return s.shopRepository.GetAllShops()
-}
-
 func NewShopService(shopRepository *repositories.ShopRepository) *ShopService {
 	return &ShopService{shopRepository: shopRepository}
+}
+
+func (s *ShopService) GetAllShops() ([]*models.Shop, error) {
+	return s.shopRepository.GetAllShops()
 }
 
 func (s *ShopService) CreateShop(shop *models.Shop) error {

@@ -9,12 +9,12 @@ type ShopResolver struct {
 	shopService *services.ShopService
 }
 
-func (r *ShopResolver) ResolveGetAllShops(params graphql.ResolveParams) (interface{}, error) {
-	return r.shopService.GetAllShops()
-}
-
 func NewShopResolver(shopService *services.ShopService) *ShopResolver {
 	return &ShopResolver{shopService: shopService}
+}
+
+func (r *ShopResolver) ResolveGetAllShops(params graphql.ResolveParams) (interface{}, error) {
+	return r.shopService.GetAllShops()
 }
 
 func (r *ShopResolver) ResolveCreateShop(params graphql.ResolveParams) (interface{}, error) {

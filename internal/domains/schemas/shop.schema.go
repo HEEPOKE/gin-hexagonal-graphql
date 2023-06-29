@@ -1,9 +1,6 @@
 package schemas
 
-import (
-	"github.com/HEEPOKE/gin-hexagonal-graphql/internal/domains/models"
-	"github.com/graphql-go/graphql"
-)
+import "github.com/graphql-go/graphql"
 
 var ShopType = graphql.NewObject(
 	graphql.ObjectConfig{
@@ -25,35 +22,19 @@ var ShopType = graphql.NewObject(
 				Type: graphql.String,
 			},
 			"created_at": &graphql.Field{
-				Type: graphql.DateTime,
-				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-					shop := p.Source.(*models.Shop)
-					return shop.CreatedAt, nil
-				},
+				Type: graphql.String,
 			},
 			"updated_at": &graphql.Field{
-				Type: graphql.DateTime,
-				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-					shop := p.Source.(*models.Shop)
-					return shop.UpdatedAt, nil
-				},
+				Type: graphql.String,
 			},
 			"deleted_at": &graphql.Field{
-				Type: graphql.DateTime,
-				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-					shop := p.Source.(*models.Shop)
-					return shop.DeletedAt.Time, nil
-				},
+				Type: graphql.String,
 			},
 			"owner_id": &graphql.Field{
 				Type: graphql.Int,
 			},
 			"owner": &graphql.Field{
 				Type: UserType,
-				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-					shop := p.Source.(*models.Shop)
-					return shop.Owner, nil
-				},
 			},
 		},
 	},

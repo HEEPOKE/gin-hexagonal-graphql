@@ -1,13 +1,12 @@
 package ports
 
 import (
-	"github.com/HEEPOKE/gin-hexagonal-graphql/pkg/database"
+	"github.com/HEEPOKE/gin-hexagonal-graphql/internal/app/resolver"
+	"github.com/HEEPOKE/gin-hexagonal-graphql/internal/domains/schemas"
 	"github.com/graphql-go/graphql"
 )
 
 func ShopFields(shopResolver *resolver.ShopResolver) graphql.Fields {
-	shopRepository := repositories.NewShopRepository(database.DB)
-
 	fields := graphql.Fields{
 		"shops": &graphql.Field{
 			Type: graphql.NewList(schemas.ShopType),

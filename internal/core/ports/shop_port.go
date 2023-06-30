@@ -7,14 +7,14 @@ import (
 )
 
 func ShopFields(shopResolver *resolver.ShopResolver) graphql.Fields {
-	fields := graphql.Fields{
-		"getAllShops": &graphql.Field{
+	return graphql.Fields{
+		"shops": &graphql.Field{
 			Type: graphql.NewList(schemas.ShopType),
 			Resolve: func(params graphql.ResolveParams) (interface{}, error) {
 				return shopResolver.ResolveGetAllShops(params)
 			},
 		},
-		"getShopByID": &graphql.Field{
+		"shop": &graphql.Field{
 			Type: schemas.ShopType,
 			Args: graphql.FieldConfigArgument{
 				"id": &graphql.ArgumentConfig{
@@ -62,6 +62,4 @@ func ShopFields(shopResolver *resolver.ShopResolver) graphql.Fields {
 			},
 		},
 	}
-
-	return fields
 }

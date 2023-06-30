@@ -21,9 +21,5 @@ cp .env.example .env
 ## run
 
 ```bash
-go mod tidy
-```
-
-```bash
 go run cmd/main.go
 ```

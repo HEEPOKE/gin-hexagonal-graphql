@@ -8,13 +8,13 @@ import (
 
 func UserFields(userResolver *resolver.UserResolver) graphql.Fields {
 	fields := graphql.Fields{
-		"users": &graphql.Field{
+		"getAllUsers": &graphql.Field{
 			Type: graphql.NewList(schemas.UserType),
 			Resolve: func(params graphql.ResolveParams) (interface{}, error) {
 				return userResolver.ResolveGetAllUsers(params)
 			},
 		},
-		"user": &graphql.Field{
+		"getUserByID": &graphql.Field{
 			Type: schemas.UserType,
 			Args: graphql.FieldConfigArgument{
 				"id": &graphql.ArgumentConfig{

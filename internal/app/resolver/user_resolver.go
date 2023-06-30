@@ -1,6 +1,8 @@
 package resolver
 
 import (
+	"fmt"
+
 	"github.com/HEEPOKE/gin-hexagonal-graphql/internal/app/services"
 	"github.com/HEEPOKE/gin-hexagonal-graphql/internal/domains/models"
 	"github.com/HEEPOKE/gin-hexagonal-graphql/internal/domains/models/response"
@@ -65,7 +67,7 @@ func (r *UserResolver) ResolveCreateUser(params graphql.ResolveParams) (interfac
 		Tel:      tel,
 		Role:     role,
 	}
-
+	fmt.Print(user)
 	err := r.UserService.CreateUser(user)
 	if err != nil {
 		errorResponse := response.NewResponse(nil, constants.FAILED)
@@ -74,7 +76,7 @@ func (r *UserResolver) ResolveCreateUser(params graphql.ResolveParams) (interfac
 	}
 
 	successResponse := response.NewResponse(user, constants.SUCCESS)
-	return successResponse.Payload, nil
+	return successResponse, nil
 }
 
 func (r *UserResolver) ResolveUpdateUser(params graphql.ResolveParams) (interface{}, error) {

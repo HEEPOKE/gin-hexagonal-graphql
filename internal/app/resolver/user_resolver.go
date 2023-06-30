@@ -70,8 +70,12 @@ func (r *UserResolver) ResolveUpdateUser(params graphql.ResolveParams) (interfac
 	user.Role = role
 	user.UpdatedAt = time.Now()
 
-	err = r.UserService.UpdateUser(id, user)
-	return user, err
+	_, err = r.UserService.UpdateUser(id, user)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
 }
 
 func (r *UserResolver) ResolveDeleteUser(params graphql.ResolveParams) (interface{}, error) {

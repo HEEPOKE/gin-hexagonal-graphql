@@ -32,9 +32,19 @@ func (ur *UserRepository) GetUserByID(id int) (*models.User, error) {
 	return &user, result.Error
 }
 
-func (ur *UserRepository) UpdateUser(id int, user *models.User) error {
+func (ur *UserRepository) UpdateUser(id int, user *models.User) (*models.User, error) {
 	err := ur.DB.Model(&models.User{}).Where("id = ?", id).Updates(user).Error
-	return err
+	if err != nil {
+		return nil, err
+	}
+
+	updatedUser := &models.User{}
+	err = ur.DB.First(updatedUser, id).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return updatedUser, nil
 }
 
 func (ur *UserRepository) DeleteUser(user *models.User) error {

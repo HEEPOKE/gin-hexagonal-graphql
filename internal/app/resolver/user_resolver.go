@@ -1,8 +1,6 @@
 package resolver
 
 import (
-	"time"
-
 	"github.com/HEEPOKE/gin-hexagonal-graphql/internal/app/services"
 	"github.com/HEEPOKE/gin-hexagonal-graphql/internal/domains/models"
 	"github.com/graphql-go/graphql"
@@ -37,13 +35,11 @@ func (r *UserResolver) ResolveCreateUser(params graphql.ResolveParams) (interfac
 	role := params.Args["role"].(string)
 
 	user := &models.User{
-		Username:  username,
-		Email:     email,
-		Password:  password,
-		Tel:       tel,
-		Role:      role,
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
+		Username: username,
+		Email:    email,
+		Password: password,
+		Tel:      tel,
+		Role:     role,
 	}
 
 	err := r.UserService.CreateUser(user)
@@ -69,7 +65,6 @@ func (r *UserResolver) ResolveUpdateUser(params graphql.ResolveParams) (interfac
 	user.Password = password
 	user.Tel = tel
 	user.Role = role
-	user.UpdatedAt = time.Now()
 
 	_, err = r.UserService.UpdateUser(user)
 	if err != nil {

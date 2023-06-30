@@ -21,22 +21,26 @@ func NewUserResolver(userService *services.UserService) *UserResolver {
 func (r *UserResolver) ResolveGetAllUsers(params graphql.ResolveParams) (interface{}, error) {
 	users, err := r.UserService.GetAllUsers()
 	if err != nil {
-		errorResponse := &response.ResponseError{
-			Code:    constants.FAILED.Code,
-			Message: constants.FAILED.Message,
-			Err:     err,
-		}
-
-		return nil, errorResponse
+		errorResponse := response.NewResponse(nil, constants.FAILED)
+		errorResponse.Status.Error = err.Error()
+		return errorResponse, nil
 	}
 
-	return users, nil
+	successResponse := response.NewResponse(users, constants.SUCCESS)
+	return successResponse, nil
 }
 
 func (r *UserResolver) ResolveGetUserByID(params graphql.ResolveParams) (interface{}, error) {
 	id := params.Args["id"].(int)
 	user, err := r.UserService.GetUserByID(id)
-	return user, err
+	if err != nil {
+		errorResponse := response.NewResponse(nil, constants.FAILED)
+		errorResponse.Status.Error = err.Error()
+		return errorResponse, nil
+	}
+
+	successResponse := response.NewResponse(user, constants.SUCCESS)
+	return successResponse, nil
 }
 
 func (r *UserResolver) ResolveCreateUser(params graphql.ResolveParams) (interface{}, error) {
@@ -55,7 +59,14 @@ func (r *UserResolver) ResolveCreateUser(params graphql.ResolveParams) (interfac
 	}
 
 	err := r.UserService.CreateUser(user)
-	return user, err
+	if err != nil {
+		errorResponse := response.NewResponse(nil, constants.FAILED)
+		errorResponse.Status.Error = err.Error()
+		return errorResponse, nil
+	}
+
+	successResponse := response.NewResponse(user, constants.SUCCESS)
+	return successResponse, nil
 }
 
 func (r *UserResolver) ResolveUpdateUser(params graphql.ResolveParams) (interface{}, error) {
@@ -68,7 +79,9 @@ func (r *UserResolver) ResolveUpdateUser(params graphql.ResolveParams) (interfac
 
 	user, err := r.UserService.GetUserByID(id)
 	if err != nil {
-		return nil, err
+		errorResponse := response.NewResponse(nil, constants.FAILED)
+		errorResponse.Status.Error = err.Error()
+		return errorResponse, nil
 	}
 
 	user.ID = id
@@ -80,10 +93,13 @@ func (r *UserResolver) ResolveUpdateUser(params graphql.ResolveParams) (interfac
 
 	_, err = r.UserService.UpdateUser(user)
 	if err != nil {
-		return nil, err
+		errorResponse := response.NewResponse(nil, constants.FAILED)
+		errorResponse.Status.Error = err.Error()
+		return errorResponse, nil
 	}
 
-	return user, nil
+	successResponse := response.NewResponse(user, constants.SUCCESS)
+	return successResponse, nil
 }
 
 func (r *UserResolver) ResolveDeleteUser(params graphql.ResolveParams) (interface{}, error) {
@@ -91,9 +107,18 @@ func (r *UserResolver) ResolveDeleteUser(params graphql.ResolveParams) (interfac
 
 	user, err := r.UserService.GetUserByID(id)
 	if err != nil {
-		return nil, err
+		errorResponse := response.NewResponse(nil, constants.FAILED)
+		errorResponse.Status.Error = err.Error()
+		return errorResponse, nil
 	}
 
 	err = r.UserService.DeleteUser(user)
-	return true, err
+	if err != nil {
+		errorResponse := response.NewResponse(nil, constants.FAILED)
+		errorResponse.Status.Error = err.Error()
+		return errorResponse, nil
+	}
+
+	successResponse := response.NewResponse(true, constants.SUCCESS)
+	return successResponse, nil
 }

@@ -27,8 +27,8 @@ func (us *UserService) GetUserByID(id int) (*models.User, error) {
 	return us.UserRepository.GetUserByID(id)
 }
 
-func (us *UserService) UpdateUser(user *models.User) error {
-	return us.UserRepository.UpdateUser(user)
+func (us *UserService) UpdateUser(id int, user *models.User) error {
+	return us.UserRepository.UpdateUser(id, user)
 }
 
 func (us *UserService) DeleteUser(user *models.User) error {

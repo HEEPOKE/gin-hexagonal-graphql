@@ -1,6 +1,8 @@
 package repositories
 
 import (
+	"errors"
+
 	"github.com/HEEPOKE/gin-hexagonal-graphql/internal/domains/models"
 	"gorm.io/gorm"
 )
@@ -29,7 +31,13 @@ func (ur *UserRepository) CreateUser(user *models.User) error {
 func (ur *UserRepository) GetUserByID(id int) (*models.User, error) {
 	var user models.User
 	result := ur.DB.First(&user, id)
-	return &user, result.Error
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return nil, gorm.ErrRecordNotFound
+		}
+		return nil, result.Error
+	}
+	return &user, nil
 }
 
 func (ur *UserRepository) UpdateUser(id int, user *models.User) (*models.User, error) {
@@ -49,5 +57,11 @@ func (ur *UserRepository) UpdateUser(id int, user *models.User) (*models.User, e
 
 func (ur *UserRepository) DeleteUser(user *models.User) error {
 	result := ur.DB.Delete(user)
-	return result.Error
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return gorm.ErrRecordNotFound
+		}
+		return result.Error
+	}
+	return nil
 }

@@ -21,15 +21,6 @@ var ShopType = graphql.NewObject(
 			"telShop": &graphql.Field{
 				Type: graphql.String,
 			},
-			"created_at": &graphql.Field{
-				Type: graphql.String,
-			},
-			"updated_at": &graphql.Field{
-				Type: graphql.String,
-			},
-			"deleted_at": &graphql.Field{
-				Type: graphql.String,
-			},
 			"owner_id": &graphql.Field{
 				Type: graphql.Int,
 			},

@@ -6,6 +6,7 @@ import (
 	"github.com/HEEPOKE/gin-hexagonal-graphql/internal/domains/models/response"
 	"github.com/HEEPOKE/gin-hexagonal-graphql/pkg/constants"
 	"github.com/graphql-go/graphql"
+	"gorm.io/gorm"
 )
 
 type UserResolver struct {
@@ -34,6 +35,11 @@ func (r *UserResolver) ResolveGetUserByID(params graphql.ResolveParams) (interfa
 	id := params.Args["id"].(int)
 	user, err := r.UserService.GetUserByID(id)
 	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			notFoundResponse := response.NewResponse(nil, constants.NOT_FOUND)
+			return notFoundResponse, nil
+		}
+
 		errorResponse := response.NewResponse(nil, constants.FAILED)
 		errorResponse.Status.Error = err.Error()
 		return errorResponse, nil
@@ -107,6 +113,11 @@ func (r *UserResolver) ResolveDeleteUser(params graphql.ResolveParams) (interfac
 
 	user, err := r.UserService.GetUserByID(id)
 	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			notFoundResponse := response.NewResponse(nil, constants.NOT_FOUND)
+			return notFoundResponse, nil
+		}
+
 		errorResponse := response.NewResponse(nil, constants.FAILED)
 		errorResponse.Status.Error = err.Error()
 		return errorResponse, nil
@@ -119,6 +130,6 @@ func (r *UserResolver) ResolveDeleteUser(params graphql.ResolveParams) (interfac
 		return errorResponse, nil
 	}
 
-	successResponse := response.NewResponse(true, constants.SUCCESS)
+	successResponse := response.NewResponse(nil, constants.SUCCESS)
 	return successResponse, nil
 }

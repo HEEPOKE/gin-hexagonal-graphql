@@ -17,18 +17,18 @@ func (s *ShopService) GetAllShops() ([]*models.Shop, error) {
 	return s.shopRepository.GetAllShops()
 }
 
-func (s *ShopService) CreateShop(shop *models.Shop) error {
-	return nil
+func (s *ShopService) CreateShop(shop *models.Shop) (*models.Shop, error) {
+	return s.shopRepository.CreateShop(shop)
 }
 
 func (s *ShopService) GetShopByID(id int) (*models.Shop, error) {
-	return nil, nil
+	return s.shopRepository.GetShopByID(id)
 }
 
-func (s *ShopService) UpdateShop(shop *models.Shop) error {
-	return nil
+func (s *ShopService) UpdateShop(shop *models.Shop) (*models.Shop, error) {
+	return s.shopRepository.UpdateShop(shop.ID, shop)
 }
 
 func (s *ShopService) DeleteShop(id int) error {
-	return nil
+	return s.shopRepository.DeleteShop(id)
 }

@@ -63,6 +63,7 @@ func (r *UserResolver) ResolveUpdateUser(params graphql.ResolveParams) (interfac
 		return nil, err
 	}
 
+	user.ID = id
 	user.Username = username
 	user.Email = email
 	user.Password = password
@@ -70,7 +71,7 @@ func (r *UserResolver) ResolveUpdateUser(params graphql.ResolveParams) (interfac
 	user.Role = role
 	user.UpdatedAt = time.Now()
 
-	_, err = r.UserService.UpdateUser(id, user)
+	_, err = r.UserService.UpdateUser(user)
 	if err != nil {
 		return nil, err
 	}

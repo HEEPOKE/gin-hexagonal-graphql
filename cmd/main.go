@@ -9,17 +9,17 @@ import (
 )
 
 func main() {
-	_, err := config.LoadConfig()
+	cfg, err := config.LoadConfig()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("failed to load configuration: %s", err)
 	}
 
 	_, err = database.ConnectDatabase()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("failed to connect to the database: %s", err)
 	}
 
-	server := http.NewServer(*config.Cfg)
+	server := http.NewServer(*cfg)
 	server.ConfigureGraphQLRoutes()
 	server.Start()
 }

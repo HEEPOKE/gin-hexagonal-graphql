@@ -8,12 +8,12 @@ import (
 
 func ShopQueryFields(shopResolver *resolver.ShopResolver) graphql.Fields {
 	fields := graphql.Fields{
-		"getAllShops": &graphql.Field{
+		"shops": &graphql.Field{
 			Type:        graphql.NewList(schemas.ShopType),
 			Description: "Get all shops",
 			Resolve:     shopResolver.ResolveGetAllShops,
 		},
-		"getShopByID": &graphql.Field{
+		"shop": &graphql.Field{
 			Type:        schemas.ShopType,
 			Description: "Get a shop by ID",
 			Args: graphql.FieldConfigArgument{

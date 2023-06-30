@@ -9,7 +9,7 @@ import (
 	"github.com/graphql-go/graphql"
 )
 
-func GetRootQueryFields() graphql.Fields {
+func GetRootFields() graphql.Fields {
 	userRepository := repositories.NewUserRepository(database.DB)
 	userService := services.NewUserService(userRepository)
 	userResolver := resolver.NewUserResolver(userService)
@@ -21,10 +21,10 @@ func GetRootQueryFields() graphql.Fields {
 	shopQueryFields := ports.ShopQueryFields(shopResolver)
 
 	fields := graphql.Fields{
-		"getAllUsers": userQueryFields["getAllUsers"],
-		"getUserByID": userQueryFields["getUserByID"],
-		"getAllShops": shopQueryFields["getAllShops"],
-		"getShopByID": shopQueryFields["getShopByID"],
+		"users": userQueryFields["users"],
+		"user":  userQueryFields["user"],
+		"shops": shopQueryFields["shops"],
+		"shop":  shopQueryFields["shop"],
 	}
 
 	return fields

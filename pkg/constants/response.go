@@ -3,6 +3,7 @@ package constants
 type ResponseMessage struct {
 	Code    string `json:"code"`
 	Message string `json:"message"`
+	Error   string `json:"error"`
 }
 
 const (
@@ -24,21 +25,26 @@ var (
 	SUCCESS = ResponseMessage{
 		Code:    "0000",
 		Message: MESSAGE_SUCCESS,
+		Error:   "",
 	}
 	FAILED = ResponseMessage{
 		Code:    "0001",
 		Message: MESSAGE_FAIL,
+		Error:   "",
 	}
 	NOT_FOUND = ResponseMessage{
 		Code:    "0002",
 		Message: MESSAGE_NOTFOUND,
+		Error:   "",
 	}
 	DUPLICATE = ResponseMessage{
 		Code:    "0003",
 		Message: MESSAGE_DUPLICATE,
+		Error:   "",
 	}
 	INVALID = ResponseMessage{
 		Code:    "0004",
 		Message: MESSAGE_INVALID,
+		Error:   "",
 	}
 )

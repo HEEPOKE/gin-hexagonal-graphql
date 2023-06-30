@@ -3,6 +3,8 @@ package resolver
 import (
 	"github.com/HEEPOKE/gin-hexagonal-graphql/internal/app/services"
 	"github.com/HEEPOKE/gin-hexagonal-graphql/internal/domains/models"
+	"github.com/HEEPOKE/gin-hexagonal-graphql/internal/domains/models/response"
+	"github.com/HEEPOKE/gin-hexagonal-graphql/pkg/constants"
 	"github.com/graphql-go/graphql"
 )
 
@@ -18,7 +20,17 @@ func NewUserResolver(userService *services.UserService) *UserResolver {
 
 func (r *UserResolver) ResolveGetAllUsers(params graphql.ResolveParams) (interface{}, error) {
 	users, err := r.UserService.GetAllUsers()
-	return users, err
+	if err != nil {
+		errorResponse := &response.ResponseError{
+			Code:    constants.FAILED.Code,
+			Message: constants.FAILED.Message,
+			Err:     err,
+		}
+
+		return nil, errorResponse
+	}
+
+	return users, nil
 }
 
 func (r *UserResolver) ResolveGetUserByID(params graphql.ResolveParams) (interface{}, error) {

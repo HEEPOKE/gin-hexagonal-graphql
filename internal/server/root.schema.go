@@ -9,28 +9,45 @@ import (
 	"github.com/graphql-go/graphql"
 )
 
-func GetRootFields() graphql.Fields {
+func GetRootQueryFields() graphql.Fields {
 	userRepository := repositories.NewUserRepository(database.DB)
 	userService := services.NewUserService(userRepository)
 	userResolver := resolver.NewUserResolver(userService)
-	userFields := ports.UserFields(userResolver)
+	userQueryFields := ports.UserQueryFields(userResolver)
 
 	shopRepository := repositories.NewShopRepository(database.DB)
 	shopService := services.NewShopService(shopRepository)
 	shopResolver := resolver.NewShopResolver(shopService)
-	shopFields := ports.ShopFields(shopResolver)
+	shopQueryFields := ports.ShopQueryFields(shopResolver)
 
 	fields := graphql.Fields{
-		"users":      userFields["users"],
-		"user":       userFields["user"],
-		"createUser": userFields["createUser"],
-		"updateUser": userFields["updateUser"],
-		"deleteUser": userFields["deleteUser"],
-		"shops":      shopFields["shops"],
-		"shop":       shopFields["shop"],
-		"createShop": shopFields["createShop"],
-		"updateShop": shopFields["updateShop"],
-		"deleteShop": shopFields["deleteShop"],
+		"getAllUsers": userQueryFields["getAllUsers"],
+		"getUserByID": userQueryFields["getUserByID"],
+		"getAllShops": shopQueryFields["getAllShops"],
+		"getShopByID": shopQueryFields["getShopByID"],
+	}
+
+	return fields
+}
+
+func GetRootMutationFields() graphql.Fields {
+	userRepository := repositories.NewUserRepository(database.DB)
+	userService := services.NewUserService(userRepository)
+	userResolver := resolver.NewUserResolver(userService)
+	userMutationFields := ports.UserMutationFields(userResolver)
+
+	shopRepository := repositories.NewShopRepository(database.DB)
+	shopService := services.NewShopService(shopRepository)
+	shopResolver := resolver.NewShopResolver(shopService)
+	shopMutationFields := ports.ShopMutationFields(shopResolver)
+
+	fields := graphql.Fields{
+		"createUser": userMutationFields["createUser"],
+		"updateUser": userMutationFields["updateUser"],
+		"deleteUser": userMutationFields["deleteUser"],
+		"createShop": shopMutationFields["createShop"],
+		"updateShop": shopMutationFields["updateShop"],
+		"deleteShop": shopMutationFields["deleteShop"],
 	}
 
 	return fields

@@ -10,12 +10,12 @@ var schema graphql.Schema
 func init() {
 	rootQuery := graphql.ObjectConfig{
 		Name:   "Query",
-		Fields: server.GetRootFields(),
+		Fields: server.GetRootQueryFields(),
 	}
 
 	rootMutation := graphql.ObjectConfig{
 		Name:   "Mutation",
-		Fields: server.GetRootFields(),
+		Fields: server.GetRootMutationFields(),
 	}
 
 	schemaConfig := graphql.SchemaConfig{

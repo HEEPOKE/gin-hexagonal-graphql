@@ -50,11 +50,13 @@ func (r *UserResolver) ResolveGetUserByID(params graphql.ResolveParams) (interfa
 }
 
 func (r *UserResolver) ResolveCreateUser(params graphql.ResolveParams) (interface{}, error) {
-	username := params.Args["username"].(string)
-	email := params.Args["email"].(string)
-	password := params.Args["password"].(string)
-	tel := params.Args["tel"].(string)
-	role := params.Args["role"].(string)
+	userInput := params.Args["user"].(map[string]interface{})
+
+	username := userInput["username"].(string)
+	email := userInput["email"].(string)
+	password := userInput["password"].(string)
+	tel := userInput["tel"].(string)
+	role := userInput["role"].(string)
 
 	user := &models.User{
 		Username: username,

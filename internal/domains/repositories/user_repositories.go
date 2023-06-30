@@ -20,12 +20,18 @@ func NewUserRepository(db *gorm.DB) *UserRepository {
 func (ur *UserRepository) GetAllUsers() ([]*models.User, error) {
 	var users []*models.User
 	result := ur.DB.Find(&users)
-	return users, result.Error
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return users, nil
 }
 
 func (ur *UserRepository) CreateUser(user *models.User) error {
 	result := ur.DB.Create(user)
-	return result.Error
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
 }
 
 func (ur *UserRepository) GetUserByID(id int) (*models.User, error) {

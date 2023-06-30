@@ -6,60 +6,64 @@ import (
 	"github.com/graphql-go/graphql"
 )
 
-func ShopFields(shopResolver *resolver.ShopResolver) graphql.Fields {
-	return graphql.Fields{
-		"shops": &graphql.Field{
-			Type: graphql.NewList(schemas.ShopType),
-			Resolve: func(params graphql.ResolveParams) (interface{}, error) {
-				return shopResolver.ResolveGetAllShops(params)
-			},
+func ShopQueryFields(shopResolver *resolver.ShopResolver) graphql.Fields {
+	fields := graphql.Fields{
+		"getAllShops": &graphql.Field{
+			Type:        graphql.NewList(schemas.ShopType),
+			Description: "Get all shops",
+			Resolve:     shopResolver.ResolveGetAllShops,
 		},
-		"shop": &graphql.Field{
-			Type: schemas.ShopType,
+		"getShopByID": &graphql.Field{
+			Type:        schemas.ShopType,
+			Description: "Get a shop by ID",
 			Args: graphql.FieldConfigArgument{
 				"id": &graphql.ArgumentConfig{
 					Type: graphql.NewNonNull(graphql.Int),
 				},
 			},
-			Resolve: func(params graphql.ResolveParams) (interface{}, error) {
-				return shopResolver.ResolveGetShopByID(params)
-			},
-		},
-		"createShop": &graphql.Field{
-			Type: schemas.ShopType,
-			Args: graphql.FieldConfigArgument{
-				"shop": &graphql.ArgumentConfig{
-					Type: graphql.NewNonNull(schemas.ShopInputType),
-				},
-			},
-			Resolve: func(params graphql.ResolveParams) (interface{}, error) {
-				return shopResolver.ResolveCreateShop(params)
-			},
-		},
-		"updateShop": &graphql.Field{
-			Type: schemas.ShopType,
-			Args: graphql.FieldConfigArgument{
-				"id": &graphql.ArgumentConfig{
-					Type: graphql.NewNonNull(graphql.Int),
-				},
-				"shop": &graphql.ArgumentConfig{
-					Type: graphql.NewNonNull(schemas.ShopInputType),
-				},
-			},
-			Resolve: func(params graphql.ResolveParams) (interface{}, error) {
-				return shopResolver.ResolveUpdateShop(params)
-			},
-		},
-		"deleteShop": &graphql.Field{
-			Type: schemas.ShopType,
-			Args: graphql.FieldConfigArgument{
-				"id": &graphql.ArgumentConfig{
-					Type: graphql.NewNonNull(graphql.Int),
-				},
-			},
-			Resolve: func(params graphql.ResolveParams) (interface{}, error) {
-				return shopResolver.ResolveDeleteShop(params)
-			},
+			Resolve: shopResolver.ResolveGetShopByID,
 		},
 	}
+
+	return fields
+}
+
+func ShopMutationFields(shopResolver *resolver.ShopResolver) graphql.Fields {
+	fields := graphql.Fields{
+		"createShop": &graphql.Field{
+			Type:        schemas.ShopType,
+			Description: "Create a new shop",
+			Args: graphql.FieldConfigArgument{
+				"shop": &graphql.ArgumentConfig{
+					Type: graphql.NewNonNull(schemas.ShopInputType),
+				},
+			},
+			Resolve: shopResolver.ResolveCreateShop,
+		},
+		"updateShop": &graphql.Field{
+			Type:        schemas.ShopType,
+			Description: "Update an existing shop",
+			Args: graphql.FieldConfigArgument{
+				"id": &graphql.ArgumentConfig{
+					Type: graphql.NewNonNull(graphql.Int),
+				},
+				"shop": &graphql.ArgumentConfig{
+					Type: graphql.NewNonNull(schemas.ShopInputType),
+				},
+			},
+			Resolve: shopResolver.ResolveUpdateShop,
+		},
+		"deleteShop": &graphql.Field{
+			Type:        schemas.ShopType,
+			Description: "Delete a shop",
+			Args: graphql.FieldConfigArgument{
+				"id": &graphql.ArgumentConfig{
+					Type: graphql.NewNonNull(graphql.Int),
+				},
+			},
+			Resolve: shopResolver.ResolveDeleteShop,
+		},
+	}
+
+	return fields
 }

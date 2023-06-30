@@ -63,21 +63,6 @@ func UserMutationFields(userResolver *resolver.UserResolver) graphql.Fields {
 			},
 			Resolve: userResolver.ResolveDeleteUser,
 		},
-		"getAllUsers": &graphql.Field{
-			Type:        graphql.NewList(schemas.UserType),
-			Description: "Get all users",
-			Resolve:     userResolver.ResolveGetAllUsers,
-		},
-		"getUserByID": &graphql.Field{
-			Type:        schemas.UserType,
-			Description: "Get a user by ID",
-			Args: graphql.FieldConfigArgument{
-				"id": &graphql.ArgumentConfig{
-					Type: graphql.NewNonNull(graphql.Int),
-				},
-			},
-			Resolve: userResolver.ResolveGetUserByID,
-		},
 	}
 
 	return fields

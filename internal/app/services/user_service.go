@@ -20,7 +20,11 @@ func (us *UserService) GetAllUsers() ([]*models.User, error) {
 }
 
 func (us *UserService) CreateUser(user *models.User) error {
-	return us.UserRepository.CreateUser(user)
+	err := us.UserRepository.CreateUser(user)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (us *UserService) GetUserByID(id int) (*models.User, error) {

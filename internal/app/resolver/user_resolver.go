@@ -52,15 +52,15 @@ func (r *UserResolver) ResolveGetUserByID(params graphql.ResolveParams) (interfa
 func (r *UserResolver) ResolveCreateUser(params graphql.ResolveParams) (interface{}, error) {
 	userInput := params.Args["user"].(map[string]interface{})
 
-	username := userInput["username"].(string)
 	email := userInput["email"].(string)
+	username := userInput["username"].(string)
 	password := userInput["password"].(string)
 	tel := userInput["tel"].(string)
-	role := userInput["role"].(string)
+	role, _ := userInput["role"].(string)
 
 	user := &models.User{
-		Username: username,
 		Email:    email,
+		Username: username,
 		Password: password,
 		Tel:      tel,
 		Role:     role,
@@ -74,7 +74,7 @@ func (r *UserResolver) ResolveCreateUser(params graphql.ResolveParams) (interfac
 	}
 
 	successResponse := response.NewResponse(user, constants.SUCCESS)
-	return successResponse, nil
+	return successResponse.Payload, nil
 }
 
 func (r *UserResolver) ResolveUpdateUser(params graphql.ResolveParams) (interface{}, error) {

@@ -9,6 +9,26 @@ import (
 	"github.com/graphql-go/graphql"
 )
 
+type RootResolver struct {
+	UserResolver *resolver.UserResolver
+	ShopResolver *resolver.ShopResolver
+}
+
+func NewRootResolver() *RootResolver {
+	userRepository := repositories.NewUserRepository(database.DB)
+	userService := services.NewUserService(userRepository)
+	userResolver := resolver.NewUserResolver(userService)
+
+	shopRepository := repositories.NewShopRepository(database.DB)
+	shopService := services.NewShopService(shopRepository)
+	shopResolver := resolver.NewShopResolver(shopService)
+
+	return &RootResolver{
+		UserResolver: userResolver,
+		ShopResolver: shopResolver,
+	}
+}
+
 func GetRootFields() graphql.Fields {
 	userRepository := repositories.NewUserRepository(database.DB)
 	userService := services.NewUserService(userRepository)

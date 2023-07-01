@@ -1,8 +1,6 @@
 package resolver
 
 import (
-	"fmt"
-
 	"github.com/HEEPOKE/gin-hexagonal-graphql/internal/app/services"
 	"github.com/HEEPOKE/gin-hexagonal-graphql/internal/domains/models"
 	"github.com/HEEPOKE/gin-hexagonal-graphql/internal/domains/models/response"
@@ -53,7 +51,6 @@ func (r *UserResolver) ResolveGetUserByID(params graphql.ResolveParams) (interfa
 
 func (r *UserResolver) ResolveCreateUser(params graphql.ResolveParams) (interface{}, error) {
 	userInput := params.Args["user"].(map[string]interface{})
-
 	email := userInput["email"].(string)
 	username := userInput["username"].(string)
 	password := userInput["password"].(string)
@@ -67,7 +64,7 @@ func (r *UserResolver) ResolveCreateUser(params graphql.ResolveParams) (interfac
 		Tel:      tel,
 		Role:     role,
 	}
-	fmt.Print(user)
+
 	err := r.UserService.CreateUser(user)
 	if err != nil {
 		errorResponse := response.NewResponse(nil, constants.FAILED)
@@ -83,9 +80,9 @@ func (r *UserResolver) ResolveUpdateUser(params graphql.ResolveParams) (interfac
 	id := params.Args["id"].(int)
 	username := params.Args["username"].(string)
 	email := params.Args["email"].(string)
-	password := params.Args["password"].(string)
+	password, _ := params.Args["password"].(string)
 	tel := params.Args["tel"].(string)
-	role := params.Args["role"].(string)
+	role, _ := params.Args["role"].(string)
 
 	user, err := r.UserService.GetUserByID(id)
 	if err != nil {
